@@ -4,20 +4,10 @@ env:
 on:
   push:
     paths:
-      - 'src/**'
-      - 'tests/**'
-      - 'BlogApp.sln'
-      - 'Directory.Build.props'
-      - '**/blogapi-workflow.yml'
-  pull_request:
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - 'BlogApp.sln'
-      - 'Directory.Build.props'
-      - '**/blogapi-workflow.yml'
-  workflow_dispatch:
+      branches: {main}
+    
 jobs:
+  
   build:
     runs-on: ubuntu-latest
     steps:
@@ -47,25 +37,7 @@ jobs:
       - name: Test
         run: dotnet test -c Release --no-build
 
-##test2
-
-
-name: .NET
-
-on:
-  schedule:
-  - cron: "0 2 * * 1-5"
-  push:
-    branches:
-    - main
-    - release/*
-  pull_request:
-    branches:
-    - main
-
-jobs:
-  build:
-
+  build2:
     runs-on: ubuntu-latest
 
     steps:
@@ -81,18 +53,8 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
       
-##test3
 
-name: Build and deploy ASP.Net Core app to Azure Web App - DevOpsCasus
-
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-
-jobs:
-  build:
+  build3:
     runs-on: ubuntu-latest
 
     steps:
