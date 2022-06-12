@@ -17,7 +17,7 @@ jobs:
                     docker-compose up -d  
 
       - name: Wait for SQL Server container
-        uses: KasperSpierings1/wait-action@master
+        uses: KasperSpierings1/testrepo@master
         with:
           time: '5s'
 
