@@ -1,6 +1,5 @@
-name: BlogAPI
-env:
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+name: Testing
+
 on:
   push:
    branches: [main]
