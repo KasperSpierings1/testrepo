@@ -2,40 +2,11 @@ name: Testing
 
 on:
   push:
-   branches: [main]
+   branches: [master]
     
 jobs:
-  
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-    
-      - name: Start dependencies (docker-compose)
-        run: |
-                    docker-compose up -d  
 
-      - name: Wait for SQL Server container
-        uses: KasperSpierings1/wait-action@master
-        with:
-          time: '5s'
-
-      - name: Install .NET Core SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-    
-      - name: Restore NuGet packages
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build -c Release --no-restore
-    
-      - name: Test
-        run: dotnet test -c Release --no-build
-
-  build2:
+  install:
     runs-on: ubuntu-latest
 
     steps:
@@ -46,14 +17,47 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
+      
+  
     - name: Build
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
       
-
-  build3:
+  codeanalysis:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+        fail-fast: false
+        matrix:
+          language: [ 'csharp' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: codeanalysis 
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       - uses: actions/checkout@v2
@@ -61,7 +65,7 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.1.301'
+          dotnet-version: 5.0.x
           include-prerelease: true
 
       - name: Build with dotnet
@@ -75,15 +79,6 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
@@ -97,3 +92,4 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C9D9EB56408E4E4E9874C368A9F2C241 }}
           package: .
+
