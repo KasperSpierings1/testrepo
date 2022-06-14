@@ -29,15 +29,9 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
         
-  build:
-    runs-on: ubuntu-latest
-    steps:
       - name: Build
         run: dotnet build -c Release --no-restore
   
-  test:
-    runs-on: ubuntu-latest
-    steps:
       - name: Test
         run: dotnet test -c Release --no-build
 
