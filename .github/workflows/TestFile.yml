@@ -76,7 +76,7 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
         
       - name: Change Permissions
-        run: sudo chmod -R 777
+        run: sudo chmod -R 777 docs
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
