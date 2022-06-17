@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
@@ -73,6 +74,9 @@ jobs:
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        
+      - name: Change Permissions
+        run: sudo chmod -R 777
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
